@@ -18,7 +18,11 @@ def hello_world(request):
     q = TermQuery("agent", "\"SAMSUNG-SGH-E250i/E250iJAKA1 Profile/MIDP-2.0 Configuration/CLDC-1.1 UP.Browser/6.2.3.3.c.1.101 (GUI) MMP/2.0\"")
     results = conn.search(query = q)
 
-    return render(request, 'es-results.html', {
-        'agents': prepare_es_results(results, 'agent'),
-        'results': results,
-        })
+    #return render(request, 'es-results.html', {
+     #  'agents': prepare_es_results(results, 'agent'),
+      # 'results': results,
+      # })
+    return render(request, 'first3.html', {
+     'agents': prepare_es_results(results, 'agent'),
+      'results': results,
+      })

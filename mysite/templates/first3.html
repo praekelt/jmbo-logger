@@ -1,0 +1,37 @@
+<html>
+    <head>
+        <title>D3 Test</title>
+        <script type="text/javascript" src="{{STATIC_URL}}/d3.v2.js"></script>
+        <style type="text/css">
+		
+			div.bar {
+				display: inline-block;
+				width: 20px;
+				height: 75px;
+				margin-right: 2px;
+				background-color: teal;
+			}
+		
+		</style>
+    </head>
+    <body>
+    	
+        <script type="text/javascript">
+        var nr_of_counts = {{results.count}};
+          alert(nr_of_counts);
+           var dataset = [];                        //Initialize empty array
+            dataset = dataset.concat(nr_of_counts);
+             d3.select("body").selectAll("div")
+             .data(dataset)
+             .enter()
+             .append("div")
+             .attr("class", "bar")
+             .style("height", function(d) {
+              var barHeight = d * 5;  //Scale up by factor of 5
+             return barHeight + "px";
+            });
+           
+        </script>
+        
+    </body>
+</html>
