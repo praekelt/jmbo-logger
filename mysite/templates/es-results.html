@@ -1,0 +1,13 @@
+hello world
+
+<script>
+	var nr_of_counts = {{results.count}};
+	alert(nr_of_counts);
+
+	d = D3();
+	{% for agent in agents %}
+	d.addValue({{forloop.counter0}}, "{{agent}}");
+	{% endfor %}
+
+
+</script>
