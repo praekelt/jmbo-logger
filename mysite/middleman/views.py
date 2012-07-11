@@ -13,11 +13,15 @@ def prepare_es_results(results, key):
 
 def hello_world(request):
     conn = ES('127.0.0.1:9200')
-    conn.default_indices=["logstash-2012.07.04"]
+    conn.default_indices=["logstash-2012.07.10"]
     conn.refresh()
-    q = TermQuery("agent", "\"SAMSUNG-SGH-E250i/E250iJAKA1 Profile/MIDP-2.0 Configuration/CLDC-1.1 UP.Browser/6.2.3.3.c.1.101 (GUI) MMP/2.0\"")
+    #q =WildcardQuery("agent", "\"SAMSUNG-SGH-E250i*")
+    q =WildcardQuery("timestamp", "20/Jun/2012:06:*")
     results = conn.search(query = q)
-
+    q =WildcardQuery("timestamp", "20/Jun/2012:07:*")
+    results2 = conn.search(query = q)
+    q =WildcardQuery("timestamp", "20/Jun/2012:08:*")
+    results3 = conn.search(query = q)
     #return render(request, 'es-results.html', {
      #  'agents': prepare_es_results(results, 'agent'),
       # 'results': results,
@@ -25,4 +29,6 @@ def hello_world(request):
     return render(request, 'first3.html', {
      'agents': prepare_es_results(results, 'agent'),
       'results': results,
+      'results2': results2,
+      'results3': results3,
       })

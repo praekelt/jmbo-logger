@@ -18,16 +18,20 @@
     	
         <script type="text/javascript">
         var nr_of_counts = {{results.count}};
-          alert(nr_of_counts);
+        var nr_of_counts2 = {{results2.count}};
+        var nr_of_counts3 = {{results3.count}};
+          alert(nr_of_counts2);
            var dataset = [];                        //Initialize empty array
             dataset = dataset.concat(nr_of_counts);
+            dataset = dataset.concat(nr_of_counts2);
+            dataset = dataset.concat(nr_of_counts3);
              d3.select("body").selectAll("div")
              .data(dataset)
              .enter()
              .append("div")
              .attr("class", "bar")
              .style("height", function(d) {
-              var barHeight = d * 5;  //Scale up by factor of 5
+              var barHeight = d/100;  //Scale up by factor of 5
              return barHeight + "px";
             });
            
