@@ -12,23 +12,32 @@ def prepare_es_results(results, key):
             yield value
 
 def hello_world(request):
-    conn = ES('127.0.0.1:9200')
-    conn.default_indices=["logstash-2012.07.10"]
-    conn.refresh()
-    #q =WildcardQuery("agent", "\"SAMSUNG-SGH-E250i*")
-    q =WildcardQuery("timestamp", "20/Jun/2012:06:*")
-    results = conn.search(query = q)
-    q =WildcardQuery("timestamp", "20/Jun/2012:07:*")
-    results2 = conn.search(query = q)
-    q =WildcardQuery("timestamp", "20/Jun/2012:08:*")
-    results3 = conn.search(query = q)
-    #return render(request, 'es-results.html', {
-     #  'agents': prepare_es_results(results, 'agent'),
-      # 'results': results,
-      # })
-    return render(request, 'first3.html', {
-     'agents': prepare_es_results(results, 'agent'),
-      'results': results,
-      'results2': results2,
-      'results3': results3,
-      })
+        conn = ES('127.0.0.1:9200')
+        conn.default_indices=["logstash-2012.07.10"]
+        conn.refresh()
+        print "i'm in"
+        q = MatchAllQuery()
+        q = q.search()
+        q.facet.add_term_facet(field='agent',size=4)
+        results = conn.search(query = q)
+       
+        z= results.facets['agent']['terms'][0]['term']
+        if z == '"Java/1.5.0_15"' :
+          results.facets.agent.terms.pop(0)
+        else :
+          results.facets.agent.terms.pop(3)
+       
+        finals= [{},{},{}]
+        count=0
+        for item in results.facets['agent']['terms']:
+           mystr = item['term']
+           mystr = mystr[:mystr.find('/') ]
+           mystr = mystr[1:]
+           mystr2 = "*" + mystr +"*"
+           print mystr
+           q2 = WildcardQuery("agent", mystr2)
+           results2 = conn.search(query = q2)
+           print results2.count()
+           finals[count]={u'term' : mystr ,u'count' : results2.count()}
+           count = count + 1
+        return render(request, 'first3.html', {'agents': prepare_es_results(results, 'agent'),'finals': finals,'results':results})
