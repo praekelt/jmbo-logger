@@ -1,0 +1,94 @@
+
+    <head>
+        <title>D3 Test</title>
+        <script type="text/javascript" src="{{STATIC_URL}}/d3.v2.js"></script>
+        <style type="text/css">
+		
+			div.bar {
+				display: inline-block;
+				width: 20px;
+				height: 75px;
+				margin-right: 2px;
+				background-color: teal;
+			}
+		
+		</style>
+    </head>
+    <body>
+      <div id="chart">
+      <button class="first last" onclick="transition()">
+        Update3
+      </button><p>
+        </div>
+        <script type="text/javascript">
+        
+            var dataset3=[];
+            dataset3 = JSON.parse('{{ entry|safe }}');
+            //console.log(dataset3)
+        
+var fix = dataset3.map(stream_index);
+
+function stream_index(d,i){
+  
+  var a= d.entries;
+  //console.log("hello")
+  //console.log(a);
+  for (i = 0; i < 5; i++) bump(a);
+  //return d.entries.map(rare);
+   return a.map(rare);  
+};
+function bump(a) {
+    console.log("in_1");
+    var x = 1 / (.1 + Math.random()),
+        y = 2 * Math.random() - .5,
+        z = 10 / (.1 + Math.random());
+    console.log("in_2");
+    for (var i = 0; i < 114; i++) {
+      console.log("in");
+      var w = (i / 114 - y) * z;
+      a[i].count =  a[i].count /5;
+      a[i].count += x * Math.exp(-w * w);
+    }
+
+  };
+function rare (d,i)
+{ //console.log(d)
+  return {x: i, y: Math.max(0, d.count)};
+};
+console.log(fix)
+var n = 3, // number of layers
+    m = 114, // number of samples per layer
+    data0 = d3.layout.stack().offset("wiggle")(fix),
+    color = d3.interpolateRgb("#aad", "#600");
+//console.log(data1)
+var width = 960,
+    height = 500,
+    mx = m - 1,
+    my = d3.max(data0, function(d) {
+       //console.log (d);
+      return d3.max(d, function(d) {
+       // console.log (d);
+        return d.y0 + d.y;
+      });
+    });
+
+var area = d3.svg.area()
+    .x(function(d) { return d.x * width / mx; })
+    .y0(function(d) { return height - d.y0 * height / my; })
+    .y1(function(d) { return height - (d.y + d.y0) * height / my; });
+
+var vis = d3.select("#chart")
+  .append("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+vis.selectAll("path")
+    .data(data0)
+    .enter()
+    .append("path")
+    .style("fill", function() { return color(Math.random()); })
+    .attr("d", area);
+
+        </script>
+    </body>
+</html>
