@@ -1,0 +1,49 @@
+{
+    "template": "logstash-*",
+    "settings" : {
+        "number_of_shards" : 1,
+        "number_of_replicas" : 1,
+        "index" : {
+            "query" : { "default_field" : "@message" }
+        }
+    },
+    "mappings": {
+        "_default_": { 
+            "_all": { "enabled": false },
+            "_source": { "compress": true },
+            "dynamic_templates": [
+                
+                {
+                    "tags_template" : {
+                        "mapping": { "type": "string", "index": "not_analyzed" },
+                        "path_match": "@tags.*"
+                    }
+                }
+            ],
+            "properties" : {
+                "@fields": { "type": "object", "properties" : {
+                    "clientip" :{"type" : "string", "index" : "not_analyzed"},
+                    "ident" :{"type" : "string", "index" : "not_analyzed"},
+                    "auth" :{"type" : "string", "index" : "not_analyzed"},
+                    "timestamp" :{"type" : "date", "format" : "dd/MMM/yyyy:HH:mm:ss Z" ,"index" : "not_analyzed"},
+                    "verb" :{"type" : "string", "index" : "not_analyzed"},
+                    "request" :{"type" : "string", "index" : "not_analyzed"},
+                    "httpversion" :{"type" : "string", "index" : "not_analyzed"},
+                    "response" :{"type" : "integer"} ,
+                    "bytes" :{"type" : "integer"},
+                    "referrer" :{"type" : "string", "index" : "not_analyzed"} ,
+                    "agent" :{"type" : "string", "index" : "not_analyzed"},
+                    "calling_id":{"type" : "string", "index" : "not_analyzed"},
+                    "area" :{"type" : "string", "index" : "not_analyzed"}
+                    } }, 
+                "@message" : { "type" : "string", "index" : "not_analyzed" },
+                "@source" : { "type" : "string", "index" : "not_analyzed" },
+                "@source_host" : { "type" : "string", "index" : "not_analyzed" },
+                "@source_path" : { "type" : "string", "index" : "not_analyzed" },
+                "@tags": { "type": "object", "dynamic": true, "path": "full" }, 
+                "@timestamp" : { "type" : "date", "index" : "not_analyzed" },
+                "@type" : { "type" : "string", "index" : "not_analyzed" }
+             }
+        }
+    }
+}
