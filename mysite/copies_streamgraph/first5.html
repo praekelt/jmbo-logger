@@ -1,18 +1,7 @@
 
-    <head>
+   <head>
         <title>D3 Test</title>
         <script type="text/javascript" src="{{STATIC_URL}}/d3.v2.js"></script>
-        <style type="text/css">
-		
-			div.bar {
-				display: inline-block;
-				width: 20px;
-				height: 75px;
-				margin-right: 2px;
-				background-color: teal;
-			}
-		
-		</style>
     </head>
     <body>
       <div id="chart">
@@ -30,27 +19,10 @@ var fix = dataset3.map(stream_index);
 
 function stream_index(d,i){
   
-  var a= d.entries;
-  //console.log("hello")
-  //console.log(a);
-  for (i = 0; i < 5; i++) bump(a);
-  //return d.entries.map(rare);
-   return a.map(rare);  
+  
+   return d.entries.map(rare);  
 };
-function bump(a) {
-    console.log("in_1");
-    var x = 1 / (.1 + Math.random()),
-        y = 2 * Math.random() - .5,
-        z = 10 / (.1 + Math.random());
-    console.log("in_2");
-    for (var i = 0; i < 114; i++) {
-      console.log("in");
-      var w = (i / 114 - y) * z;
-      a[i].count =  a[i].count /5;
-      a[i].count += x * Math.exp(-w * w);
-    }
 
-  };
 function rare (d,i)
 { //console.log(d)
   return {x: i, y: Math.max(0, d.count)};
@@ -87,7 +59,9 @@ vis.selectAll("path")
     .enter()
     .append("path")
     .style("fill", function() { return color(Math.random()); })
-    .attr("d", area);
+    .attr("d", area)
+    .append("title")
+    .text(function(d,i) { return dataset3[i].term });
 
         </script>
     </body>
