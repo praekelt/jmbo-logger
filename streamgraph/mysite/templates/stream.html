@@ -1,0 +1,76 @@
+<head>
+        <title>D3 Test</title>
+        <script type="text/javascript" src="{{STATIC_URL}}/d3.v2.js"></script>
+		</style>
+    </head>
+    <body>
+      <div id="chart">
+      <button class="first last" onclick="transition()">
+        Update3
+      </button><p>
+        </div>
+        <script type="text/javascript">
+        
+          var data=[];
+          data = JSON.parse('{{ entry|safe }}');
+            
+          cosine_interpolate = function(y1, y2, mu)
+           {
+               var mu2 = (1-Math.cos(mu*Math.PI))/2;
+              return (y1*(1-mu2)+y2*mu2);
+            };
+   
+           new_data = []
+          for (var i = 0; i < data.length; i++) 
+          {
+            new_data.push({label: data[i].term, series: data[i].entries.map(function(d, i)
+              {return {x:(d.time-1340174160000)/1000, y:d.count};})});
+            var curr = new_data[i].series;
+            var series = [];
+          for (var j = 0; j < curr.length - 1; j++)
+           {
+            for (var z = 0; z < 1; z+=0.5) 
+                {
+                var x = curr[j].x + (curr[j+1].x - curr[j].x) * z;
+                var y1 = curr[j].y;
+                var y2 = curr[j+1].y;
+                series.push({x: x, y: cosine_interpolate(y1, y2, z)});
+                }
+            }
+           new_data[i].series = series;
+          };
+        console.log(new_data);
+        var may = new_data[0].series.length;
+        var n = data.length, // number of layers
+          m = may, // number of samples per layer
+          data0 = d3.layout.stack().offset("wiggle").values(function(d) { return d.series; });
+           color = d3.interpolateRgb("#aad", "#600");
+    
+        var width = 960,
+          height = 800,
+          mx = m - 1,
+          my= 200;
+   
+
+        var area = d3.svg.area()
+          .x(function(d) { return (d.x * width / mx); })
+          .y0(function(d) { return ((height - d.y0 * height / my)/5)+100; })
+          .y1(function(d) { return ((height - (d.y + d.y0) * height / my)/5)+100; });
+
+        var vis = d3.select("#chart")
+          .append("svg")
+          .attr("width", width)
+          .attr("height", height);
+
+       vis.selectAll("path")
+         .data(data0(new_data))
+         .enter()
+         .append("path")
+         .style("fill", function() { return color(Math.random()); })
+         .attr("d", function(d) { return area(d.series); })
+         .append("title")
+        .text(function(d,i) { return d.label});
+         console.log("hello")
+        </script>
+    </body>
+</html>
